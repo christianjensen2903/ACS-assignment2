@@ -47,7 +47,6 @@ public class BookStoreTest {
 	/** Single lock test */
 	private static boolean singleLock = true;
 
-	
 	/** The store manager. */
 	private static StockManager storeManager;
 
@@ -62,7 +61,7 @@ public class BookStoreTest {
 		try {
 			String localTestProperty = System.getProperty(BookStoreConstants.PROPERTY_KEY_LOCAL_TEST);
 			localTest = (localTestProperty != null) ? Boolean.parseBoolean(localTestProperty) : localTest;
-			
+
 			String singleLockProperty = System.getProperty(BookStoreConstants.PROPERTY_KEY_SINGLE_LOCK);
 			singleLock = (singleLockProperty != null) ? Boolean.parseBoolean(singleLockProperty) : singleLock;
 
@@ -91,11 +90,11 @@ public class BookStoreTest {
 	 * Helper method to add some books.
 	 *
 	 * @param isbn
-	 *            the isbn
+	 *               the isbn
 	 * @param copies
-	 *            the copies
+	 *               the copies
 	 * @throws BookStoreException
-	 *             the book store exception
+	 *                            the book store exception
 	 */
 	public void addBooks(int isbn, int copies) throws BookStoreException {
 		Set<StockBook> booksToAdd = new HashSet<StockBook>();
@@ -119,7 +118,7 @@ public class BookStoreTest {
 	 * Method to add a book, executed before every test case is run.
 	 *
 	 * @throws BookStoreException
-	 *             the book store exception
+	 *                            the book store exception
 	 */
 	@Before
 	public void initializeBooks() throws BookStoreException {
@@ -132,7 +131,7 @@ public class BookStoreTest {
 	 * Method to clean up the book store, execute after every test case is run.
 	 *
 	 * @throws BookStoreException
-	 *             the book store exception
+	 *                            the book store exception
 	 */
 	@After
 	public void cleanupBooks() throws BookStoreException {
@@ -143,7 +142,7 @@ public class BookStoreTest {
 	 * Tests basic buyBook() functionality.
 	 *
 	 * @throws BookStoreException
-	 *             the book store exception
+	 *                            the book store exception
 	 */
 	@Test
 	public void testBuyAllCopiesDefaultBook() throws BookStoreException {
@@ -172,7 +171,7 @@ public class BookStoreTest {
 	 * Tests that books with invalid ISBNs cannot be bought.
 	 *
 	 * @throws BookStoreException
-	 *             the book store exception
+	 *                            the book store exception
 	 */
 	@Test
 	public void testBuyInvalidISBN() throws BookStoreException {
@@ -202,7 +201,7 @@ public class BookStoreTest {
 	 * Tests that books can only be bought if they are in the book store.
 	 *
 	 * @throws BookStoreException
-	 *             the book store exception
+	 *                            the book store exception
 	 */
 	@Test
 	public void testBuyNonExistingISBN() throws BookStoreException {
@@ -232,7 +231,7 @@ public class BookStoreTest {
 	 * Tests that you can't buy more books than there are copies.
 	 *
 	 * @throws BookStoreException
-	 *             the book store exception
+	 *                            the book store exception
 	 */
 	@Test
 	public void testBuyTooManyBooks() throws BookStoreException {
@@ -258,7 +257,7 @@ public class BookStoreTest {
 	 * Tests that you can't buy a negative number of books.
 	 *
 	 * @throws BookStoreException
-	 *             the book store exception
+	 *                            the book store exception
 	 */
 	@Test
 	public void testBuyNegativeNumberOfBookCopies() throws BookStoreException {
@@ -284,7 +283,7 @@ public class BookStoreTest {
 	 * Tests that all books can be retrieved.
 	 *
 	 * @throws BookStoreException
-	 *             the book store exception
+	 *                            the book store exception
 	 */
 	@Test
 	public void testGetBooks() throws BookStoreException {
@@ -312,7 +311,7 @@ public class BookStoreTest {
 	 * Tests that a list of books with a certain feature can be retrieved.
 	 *
 	 * @throws BookStoreException
-	 *             the book store exception
+	 *                            the book store exception
 	 */
 	@Test
 	public void testGetCertainBooks() throws BookStoreException {
@@ -340,7 +339,7 @@ public class BookStoreTest {
 	 * Tests that books cannot be retrieved if ISBN is invalid.
 	 *
 	 * @throws BookStoreException
-	 *             the book store exception
+	 *                            the book store exception
 	 */
 	@Test
 	public void testGetInvalidIsbn() throws BookStoreException {
@@ -367,26 +366,26 @@ public class BookStoreTest {
 	}
 
 	/**
-	 * Tests that books cannot be retrieved if ISBN is invalid.
-	 *
-	 * @throws BookStoreException
-	 *             the book store exception
+	 * Tests that snapshots are always consistent.
 	 */
 	@Test
 	public void test2() throws BookStoreException, InterruptedException {
-		
+
 		int REPETITIONS = 1000;
 
 		Set<StockBook> booksToAdd = new HashSet<StockBook>();
 		// Add Hunger Games trilogy
-		booksToAdd.add(new ImmutableStockBook(1, "The Hunger Games", "Suzanne Collins", (float) 10, NUM_COPIES, 0, 0, 0, false));
-		booksToAdd.add(new ImmutableStockBook(2, "Catching Fire", "Suzanne Collins", (float) 10, NUM_COPIES, 0, 0, 0, false));
-		booksToAdd.add(new ImmutableStockBook(3, "Mockingjay", "Suzanne Collins", (float) 10, NUM_COPIES, 0, 0, 0, false));
-		
+		booksToAdd.add(new ImmutableStockBook(1, "The Hunger Games", "Suzanne Collins", (float) 10, NUM_COPIES, 0, 0, 0,
+				false));
+		booksToAdd.add(
+				new ImmutableStockBook(2, "Catching Fire", "Suzanne Collins", (float) 10, NUM_COPIES, 0, 0, 0, false));
+		booksToAdd.add(
+				new ImmutableStockBook(3, "Mockingjay", "Suzanne Collins", (float) 10, NUM_COPIES, 0, 0, 0, false));
+
 		// Add books to the store
 		storeManager.addBooks(booksToAdd);
-		
-		// Initialize toBuy based on default books 
+
+		// Initialize toBuy based on default books
 		Set<BookCopy> toBuy = new HashSet<BookCopy>();
 		int amountToBuy = NUM_COPIES - 1;
 		for (StockBook book : booksToAdd) {
@@ -407,28 +406,26 @@ public class BookStoreTest {
 						e.printStackTrace();
 					}
 				}
-    		}
+			}
 		};
 		clientThread.start();
 
-		
 		for (int i = 0; i < REPETITIONS; i++) {
 			try {
-				// Loop over current books to make sure that the amount of books is the same as before or that the amount of books is the same as before - amountToBuy
+				// Loop over current books to make sure that the amount of books is the same as
+				// before or that the amount of books is the same as before - amountToBuy
 
-				List<StockBook> currentBooks = storeManager.getBooks();
-				
 				// System.out.println("Getting books " + i + " times");
-				
-				int boughtCount = 0;  // Keeps track of how many books were bought out
+
+				int boughtCount = 0; // Keeps track of how many books were bought out
 				int replenishedCount = 0; // Keeps track of how many books were replenished
 
-				for (StockBook book : currentBooks) {
+				for (StockBook book : storeManager.getBooks()) {
 					for (StockBook initialBook : booksToAdd) {
 						if (initialBook.getISBN() == book.getISBN()) {
 							int currentAmount = book.getNumCopies();
 							int initialAmount = initialBook.getNumCopies();
-							
+
 							if (currentAmount == initialAmount) {
 								replenishedCount++;
 							} else if (currentAmount == initialAmount - amountToBuy) {
@@ -440,79 +437,88 @@ public class BookStoreTest {
 					}
 				}
 
-				// Check that either boughtCount or replenishedCount is equal to the amount of books
+				// Check that either boughtCount or replenishedCount is equal to the amount of
+				// books
 				assertTrue(boughtCount == booksToAdd.size() || replenishedCount == booksToAdd.size());
 			} catch (BookStoreException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		clientThread.join();
-		
+
 	}
 
 	/**
-	 * Tests that books cannot be retrieved if ISBN is invalid.
-	 *
-	 * @throws BookStoreException
-	 *             the book store exception
+	 * Tests that addBooks and buyBooks can be executed concurrently and are atomic.
 	 */
-	// @Test
-	// public void test1() throws BookStoreException, InterruptedException {
+	@Test
+	public void test1() throws BookStoreException, InterruptedException {
 
-	// 	List<StockBook> initialBooks = storeManager.getBooks();
-	// 	int initialAmount = initialBooks.size();
+		int REPETITIONS = 100;
+		int initialCopies = REPETITIONS;
+
+		Set<StockBook> booksToAdd = new HashSet<StockBook>();
 
 
-	// 	Set<BookCopy> booksToBuy = new HashSet<BookCopy>();
-	// 	for (StockBook book : initialBooks) {
-	// 		booksToBuy.add(new BookCopy(book.getISBN(), 1));
-	// 	}
+		// Add Hunger Games millionology
+		for (int i = 1; i < 30000; i++) {
+			booksToAdd.add(
+				new ImmutableStockBook(i, "The Hunger Games", "Suzanne Collins", 1f, initialCopies, 0, 0, 0,
+				false));
+		}
 
-	// 	// start a thread that buys N_BOOKS_TO_BUY_OR_ADD books
-	// 	Thread client1Thread = new Thread() {
-	// 		public void run() {
-	// 			for (int i = 0; i < initialAmount; i++) {
-	// 				try {
-	// 					storeManager.addCopies(booksToBuy);
-	// 				} catch (BookStoreException e) {
-	// 					e.printStackTrace();
-	// 				}
-	// 			}
-    // 		}
-	// 	};
-	// 	Thread client2Thread = new Thread() {
-	// 		public void run() {
-	// 			for (int i = 0; i < initialAmount; i++) {
-	// 					try {
-	// 						client.buyBooks(booksToBuy);
-	// 					} catch (BookStoreException e) {
-	// 						e.printStackTrace();
-	// 					}
-	// 				}
-	// 			}
-	// 	};
-		
-	// 	client1Thread.start();
-	// 	client2Thread.start();
+		// Add books to the store
+		storeManager.addBooks(booksToAdd);
 
-	// 	client1Thread.join();
-	// 	client2Thread.join();
+		// Initialize toBuy based on default books
+		Set<BookCopy> toBuy = new HashSet<BookCopy>();
+		for (StockBook book : booksToAdd) {
+			toBuy.add(new BookCopy(book.getISBN(), 1));
+		}
 
-	// 	// Check that the amount of books is the same as before
-	// 	int currentAmount = storeManager.getBooks().size();
-	// 	assertTrue(currentAmount == initialAmount);
-	// }
+		// start a thread that buys 1 books
+		Thread client1Thread = new Thread() {
+			public void run() {
+				for (int i = 0; i < REPETITIONS; i++) {
+					try {
+						storeManager.addCopies(toBuy);
+					} catch (BookStoreException e) {
+						Thread.currentThread().interrupt();
+					}
+				}
+			}
+		};
+
+		client1Thread.start();
+
+		for (int i = 0; i < REPETITIONS; i++) {
+			client.buyBooks(toBuy);
+		}
+
+		client1Thread.join();
+
+		// Check that the amount of copies for each books is the same as before
+		List<StockBook> currentBooks = storeManager.getBooks();
+
+		for (StockBook book : currentBooks) {
+			for (StockBook hungerGamesBook : booksToAdd) {
+				if (hungerGamesBook.getISBN() == book.getISBN()) {
+					int currentAmount = book.getNumCopies();
+					assertTrue(currentAmount == initialCopies);
+				}
+			}
+		}
+
+		storeManager.removeAllBooks();
+	}
 
 	// TODO: Add 2 more tests
-
-
-
 	/**
 	 * Tear down after class.
 	 *
 	 * @throws BookStoreException
-	 *             the book store exception
+	 *                            the book store exception
 	 */
 	@AfterClass // causes that method to be run after all the tests in the class have been run.
 	public static void tearDownAfterClass() throws BookStoreException {
