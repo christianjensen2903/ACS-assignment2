@@ -40,3 +40,16 @@ running it as a "JUnit test".
 4. You can turn on/off the local/remote mode of running the test case i.e.,
 using the *HTTPProxy classes or not by configuring the localTest variable
 in each of the test classes. 
+
+
+# Ass1 feedback $\implies$ Ass2 TODO
+
+- Provide short description in report of list of tests and where they are located.
+
+- Implement all-or-nothing properly:
+   - validate the input (in one loop)
+   - perform the updates (in another loop)
+
+- Test exception message and not only message type
+
+- Interfaces do not indicate modularity, isolation and encapsulation do
