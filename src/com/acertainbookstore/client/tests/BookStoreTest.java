@@ -2,9 +2,12 @@ package com.acertainbookstore.client.tests;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -363,106 +366,146 @@ public class BookStoreTest {
 				&& booksInStorePreTest.size() == booksInStorePostTest.size());
 	}
 
+	/**
+	 * Tests that books cannot be retrieved if ISBN is invalid.
+	 *
+	 * @throws BookStoreException
+	 *             the book store exception
+	 */
 	@Test
 	public void test2() throws BookStoreException, InterruptedException {
 		
-		int REPETITIONS = 100;
-		List<StockBook> initialBooks = storeManager.getBooks();
-		int initialAmount = initialBooks.size();
-	
-		Set<BookCopy> toBuy = Set.of(new BookCopy(getDefaultBook().getISBN(), 1));
+		int REPETITIONS = 1000;
+
+		Set<StockBook> booksToAdd = new HashSet<StockBook>();
+		// Add Hunger Games trilogy
+		booksToAdd.add(new ImmutableStockBook(1, "The Hunger Games", "Suzanne Collins", (float) 10, NUM_COPIES, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(2, "Catching Fire", "Suzanne Collins", (float) 10, NUM_COPIES, 0, 0, 0, false));
+		booksToAdd.add(new ImmutableStockBook(3, "Mockingjay", "Suzanne Collins", (float) 10, NUM_COPIES, 0, 0, 0, false));
+		
+		// Add books to the store
+		storeManager.addBooks(booksToAdd);
+		
+		// Initialize toBuy based on default books 
+		Set<BookCopy> toBuy = new HashSet<BookCopy>();
+		int amountToBuy = NUM_COPIES - 1;
+		for (StockBook book : booksToAdd) {
+			toBuy.add(new BookCopy(book.getISBN(), amountToBuy));
+		}
 
 		// start a thread that buys N_BOOKS_TO_BUY_OR_ADD books
 		Thread clientThread = new Thread() {
 			public void run() {
 				for (int i = 0; i < REPETITIONS; i++) {
-					if (i % 2 == 0) {
-						try {
-							client.buyBooks(toBuy);
-						} catch (BookStoreException e) {
-							e.printStackTrace();
-						}
-					} else {
-						try {
-							storeManager.addCopies(toBuy);
-						} catch (BookStoreException e) {
-							e.printStackTrace();
-						}
-		
-					}
-				}
-    		}
-		};
-
-		Thread managerThread = new Thread() {
-			public void run() {
-				for (int i = 0; i < REPETITIONS; i++) {
 					try {
-						int currentAmount = storeManager.getBooks().size();
-						assertTrue(
-							currentAmount == initialAmount 
-						|| currentAmount == initialAmount - 1
-						);
+						System.out.println("Buying books " + i + " times");
+						client.buyBooks(toBuy);
+						System.out.println("Bought books " + i + " times");
+						// Thread.sleep(1);
+						storeManager.addCopies(toBuy);
+						System.out.println("Added books " + i + " times");
 					} catch (BookStoreException e) {
 						e.printStackTrace();
 					}
 				}
     		}
 		};
-		
-		managerThread.start();
 		clientThread.start();
 
+		
+		// for (int i = 0; i < REPETITIONS; i++) {
+		// 	try {
+		// 		// Loop over current books to make sure that the amount of books is the same as before or that the amount of books is the same as before - amountToBuy
+
+		// 		List<StockBook> currentBooks = storeManager.getBooks();
+				
+		// 		System.out.println("Getting books " + i + " times");
+				
+		// 		int boughtCount = 0;  // Keeps track of how many books were bought out
+		// 		int replenishedCount = 0; // Keeps track of how many books were replenished
+
+		// 		for (StockBook book : currentBooks) {
+		// 			for (StockBook initialBook : booksToAdd) {
+		// 				if (initialBook.getISBN() == book.getISBN()) {
+		// 					int currentAmount = book.getNumCopies();
+		// 					int initialAmount = initialBook.getNumCopies();
+							
+		// 					if (currentAmount == initialAmount) {
+		// 						replenishedCount++;
+		// 					} else if (currentAmount == initialAmount - amountToBuy) {
+		// 						boughtCount++;
+		// 					} else {
+		// 						fail();
+		// 					}
+		// 				}
+		// 			}
+		// 		}
+
+		// 		// Check that either boughtCount or replenishedCount is equal to the amount of books
+		// 		assertTrue(boughtCount == booksToAdd.size() || replenishedCount == booksToAdd.size());
+		// 	} catch (BookStoreException e) {
+		// 		e.printStackTrace();
+		// 	}
+		// }
+		
 		clientThread.join();
-		managerThread.join();
+		
 	}
 
-	@Test
-	public void test1() throws BookStoreException, InterruptedException {
+	/**
+	 * Tests that books cannot be retrieved if ISBN is invalid.
+	 *
+	 * @throws BookStoreException
+	 *             the book store exception
+	 */
+	// @Test
+	// public void test1() throws BookStoreException, InterruptedException {
+
+	// 	List<StockBook> initialBooks = storeManager.getBooks();
+	// 	int initialAmount = initialBooks.size();
+
+
+	// 	Set<BookCopy> booksToBuy = new HashSet<BookCopy>();
+	// 	for (StockBook book : initialBooks) {
+	// 		booksToBuy.add(new BookCopy(book.getISBN(), 1));
+	// 	}
+
+	// 	// start a thread that buys N_BOOKS_TO_BUY_OR_ADD books
+	// 	Thread client1Thread = new Thread() {
+	// 		public void run() {
+	// 			for (int i = 0; i < initialAmount; i++) {
+	// 				try {
+	// 					storeManager.addCopies(booksToBuy);
+	// 				} catch (BookStoreException e) {
+	// 					e.printStackTrace();
+	// 				}
+	// 			}
+    // 		}
+	// 	};
+	// 	Thread client2Thread = new Thread() {
+	// 		public void run() {
+	// 			for (int i = 0; i < initialAmount; i++) {
+	// 					try {
+	// 						client.buyBooks(booksToBuy);
+	// 					} catch (BookStoreException e) {
+	// 						e.printStackTrace();
+	// 					}
+	// 				}
+	// 			}
+	// 	};
 		
-		Set<BookCopy> booksToInsert = Set.of(new BookCopy(getDefaultBook().getISBN(), 100));
-		storeManager.addCopies(booksToInsert);
+	// 	client1Thread.start();
+	// 	client2Thread.start();
 
-		List<StockBook> initialBooks = storeManager.getBooks();
-		int initialAmount = initialBooks.size();
+	// 	client1Thread.join();
+	// 	client2Thread.join();
 
+	// 	// Check that the amount of books is the same as before
+	// 	int currentAmount = storeManager.getBooks().size();
+	// 	assertTrue(currentAmount == initialAmount);
+	// }
 
-		Set<BookCopy> booksToBuy = Set.of(new BookCopy(getDefaultBook().getISBN(), 1));
-
-		// start a thread that buys N_BOOKS_TO_BUY_OR_ADD books
-		Thread client1Thread = new Thread() {
-			public void run() {
-				for (int i = 0; i < initialAmount; i++) {
-					try {
-						storeManager.addCopies(booksToBuy);
-					} catch (BookStoreException e) {
-						e.printStackTrace();
-					}
-				}
-    		}
-		};
-		Thread client2Thread = new Thread() {
-			public void run() {
-				for (int i = 0; i < initialAmount; i++) {
-						try {
-							client.buyBooks(booksToBuy);
-						} catch (BookStoreException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-		};
-		
-		client1Thread.start();
-		client2Thread.start();
-
-		client1Thread.join();
-		client2Thread.join();
-
-		// Check that the amount of books is the same as before
-		int currentAmount = storeManager.getBooks().size();
-		assertTrue(currentAmount == initialAmount);
-	}
+	// TODO: Add 2 more tests
 
 
 

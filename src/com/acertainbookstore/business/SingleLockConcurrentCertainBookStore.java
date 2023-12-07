@@ -207,7 +207,7 @@ public class SingleLockConcurrentCertainBookStore implements BookStore, StockMan
 			
 			book = bookMap.get(isbn);
 
-			System.out.println("Num copies: " + book.getNumCopies() + " ISBN: " + isbn);
+			// System.out.println("Num copies: " + book.getNumCopies() + " ISBN: " + isbn);
 
 			if (!book.areCopiesInStore(bookCopyToBuy.getNumCopies())) {
 				// If we cannot sell the copies of the book, it is a miss.
