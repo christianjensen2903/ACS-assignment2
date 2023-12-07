@@ -27,14 +27,14 @@ import com.acertainbookstore.utils.BookStoreUtility;
 public class SingleLockConcurrentCertainBookStore implements BookStore, StockManager {
 
 	/** The mapping of books from ISBN to {@link BookStoreBook}. */
-	private Map<Integer, BookStoreBook> bookMap = null;
+	private SingleLockMap<Integer, BookStoreBook> bookMap = null;
 
 	/**
 	 * Instantiates a new {@link CertainBookStore}.
 	 */
 	public SingleLockConcurrentCertainBookStore() {
 		// Constructors are not synchronized
-		bookMap = new HashMap<>();
+		bookMap = new SingleLockMap<Integer, BookStoreBook>();
 	}
 
 	private void validate(StockBook book) throws BookStoreException {
@@ -207,6 +207,8 @@ public class SingleLockConcurrentCertainBookStore implements BookStore, StockMan
 			
 			book = bookMap.get(isbn);
 
+			System.out.println("Num copies: " + book.getNumCopies() + " ISBN: " + isbn);
+
 			if (!book.areCopiesInStore(bookCopyToBuy.getNumCopies())) {
 				// If we cannot sell the copies of the book, it is a miss.
 				salesMisses.put(isbn, bookCopyToBuy.getNumCopies() - book.getNumCopies());
@@ -227,6 +229,7 @@ public class SingleLockConcurrentCertainBookStore implements BookStore, StockMan
 		// Then make the purchase.
 		for (BookCopy bookCopyToBuy : bookCopiesToBuy) {
 			book = bookMap.get(bookCopyToBuy.getISBN());
+			// System.out.println("Book: " + book + " ISBN: " + bookCopyToBuy.getISBN());
 			book.buyCopies(bookCopyToBuy.getNumCopies());
 		}
 	}
