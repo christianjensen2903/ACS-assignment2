@@ -7,3 +7,4 @@ bin/
 *.ear
 /bin/
 .DS_Store
+src/com/acertainbookstore/client/tests/BookStoreTest.java

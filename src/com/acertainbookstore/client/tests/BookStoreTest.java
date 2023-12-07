@@ -1,13 +1,9 @@
 package com.acertainbookstore.client.tests;
 
 import static org.junit.Assert.*;
-
-import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.junit.After;
 import org.junit.AfterClass;
