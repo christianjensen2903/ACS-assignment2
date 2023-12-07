@@ -404,6 +404,7 @@ public class BookStoreTest {
 				}
 			}
 		};
+		
 		clientThread.start();
 
 		for (int i = 0; i < REPETITIONS; i++) {
@@ -441,6 +442,7 @@ public class BookStoreTest {
 			}
 		}
 
+		
 		clientThread.join();
 
 	}
@@ -509,7 +511,80 @@ public class BookStoreTest {
 		storeManager.removeAllBooks();
 	}
 
-	// TODO: Add 2 more tests
+	@Test
+	public void testConcurrentBuyingSameBooksByMultipleClients() throws InterruptedException, BookStoreException {
+		int REPETITIONS = 10;
+		int numberOfThreads = 5;
+		final int initialCopies = numberOfThreads * REPETITIONS;
+		Set<StockBook> booksToAdd = new HashSet<>();
+		Set<BookCopy> booksToBuy = new HashSet<>();
+
+		// Adding a single book with sufficient copies
+		booksToAdd.add(new ImmutableStockBook(5000, "Shared Book", "Common Author", 15.0f, initialCopies, 0, 0, 0, false));
+		booksToBuy.add(new BookCopy(5000, 1));
+
+		storeManager.addBooks(booksToAdd);
+
+		Thread[] clients = new Thread[numberOfThreads];
+		for (int i = 0; i < numberOfThreads; i++) {
+			clients[i] = new Thread(() -> {
+				try {
+					for (int j = 0; j < REPETITIONS; j++) {
+						client.buyBooks(booksToBuy);
+					}
+				} catch (BookStoreException e) {
+					Thread.currentThread().interrupt();
+				}
+			});
+			clients[i].start();
+		}
+
+		for (Thread clientThread : clients) {
+			clientThread.join();
+		}
+
+		StockBook updatedBook = storeManager.getBooks().iterator().next();
+		assertTrue(updatedBook.getNumCopies() == 0);
+	}
+
+	@Test
+	public void testConcurrentAdd() throws BookStoreException, InterruptedException {
+
+		int REPETITIONS = 10;
+		int numberOfThreads = 5;
+
+		storeManager.removeAllBooks();
+
+
+		Thread[] clients = new Thread[numberOfThreads];
+		for (int i = 0; i < numberOfThreads; i++) {
+			final int threadIndex = i; 
+			clients[i] = new Thread(() -> {
+				for (int j = 0; j < REPETITIONS; j++) {
+					try {
+						Set<StockBook> booksToAdd = new HashSet<StockBook>();
+						booksToAdd.add(new ImmutableStockBook(threadIndex * REPETITIONS + j, "The Hunger Games", "Suzanne Collins", 1f, NUM_COPIES, 0, 0, 0, false));
+						storeManager.addBooks(booksToAdd);
+					} catch (BookStoreException e) {
+						Thread.currentThread().interrupt();
+					}
+				}
+			});
+			clients[i].start();
+		}
+
+
+		for (Thread clientThread : clients) {
+			clientThread.join();
+		}
+
+		// Check that all books are added
+		List<StockBook> currentBooks = storeManager.getBooks();
+		assertTrue(currentBooks.size() == REPETITIONS * numberOfThreads - 1);
+		storeManager.removeAllBooks();
+	}
+
+
 	/**
 	 * Tear down after class.
 	 *
