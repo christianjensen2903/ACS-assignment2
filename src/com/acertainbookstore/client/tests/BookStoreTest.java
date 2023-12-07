@@ -398,12 +398,11 @@ public class BookStoreTest {
 			public void run() {
 				for (int i = 0; i < REPETITIONS; i++) {
 					try {
-						System.out.println("Buying books " + i + " times");
+						// System.out.println("Buying books " + i + " times");
 						client.buyBooks(toBuy);
-						System.out.println("Bought books " + i + " times");
-						// Thread.sleep(1);
+						// System.out.println("Bought books " + i + " times");
 						storeManager.addCopies(toBuy);
-						System.out.println("Added books " + i + " times");
+						// System.out.println("Added books " + i + " times");
 					} catch (BookStoreException e) {
 						e.printStackTrace();
 					}
@@ -413,40 +412,40 @@ public class BookStoreTest {
 		clientThread.start();
 
 		
-		// for (int i = 0; i < REPETITIONS; i++) {
-		// 	try {
-		// 		// Loop over current books to make sure that the amount of books is the same as before or that the amount of books is the same as before - amountToBuy
+		for (int i = 0; i < REPETITIONS; i++) {
+			try {
+				// Loop over current books to make sure that the amount of books is the same as before or that the amount of books is the same as before - amountToBuy
 
-		// 		List<StockBook> currentBooks = storeManager.getBooks();
+				List<StockBook> currentBooks = storeManager.getBooks();
 				
-		// 		System.out.println("Getting books " + i + " times");
+				// System.out.println("Getting books " + i + " times");
 				
-		// 		int boughtCount = 0;  // Keeps track of how many books were bought out
-		// 		int replenishedCount = 0; // Keeps track of how many books were replenished
+				int boughtCount = 0;  // Keeps track of how many books were bought out
+				int replenishedCount = 0; // Keeps track of how many books were replenished
 
-		// 		for (StockBook book : currentBooks) {
-		// 			for (StockBook initialBook : booksToAdd) {
-		// 				if (initialBook.getISBN() == book.getISBN()) {
-		// 					int currentAmount = book.getNumCopies();
-		// 					int initialAmount = initialBook.getNumCopies();
+				for (StockBook book : currentBooks) {
+					for (StockBook initialBook : booksToAdd) {
+						if (initialBook.getISBN() == book.getISBN()) {
+							int currentAmount = book.getNumCopies();
+							int initialAmount = initialBook.getNumCopies();
 							
-		// 					if (currentAmount == initialAmount) {
-		// 						replenishedCount++;
-		// 					} else if (currentAmount == initialAmount - amountToBuy) {
-		// 						boughtCount++;
-		// 					} else {
-		// 						fail();
-		// 					}
-		// 				}
-		// 			}
-		// 		}
+							if (currentAmount == initialAmount) {
+								replenishedCount++;
+							} else if (currentAmount == initialAmount - amountToBuy) {
+								boughtCount++;
+							} else {
+								fail();
+							}
+						}
+					}
+				}
 
-		// 		// Check that either boughtCount or replenishedCount is equal to the amount of books
-		// 		assertTrue(boughtCount == booksToAdd.size() || replenishedCount == booksToAdd.size());
-		// 	} catch (BookStoreException e) {
-		// 		e.printStackTrace();
-		// 	}
-		// }
+				// Check that either boughtCount or replenishedCount is equal to the amount of books
+				assertTrue(boughtCount == booksToAdd.size() || replenishedCount == booksToAdd.size());
+			} catch (BookStoreException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		clientThread.join();
 		
