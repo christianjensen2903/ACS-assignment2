@@ -1,5 +1,8 @@
 package com.acertainbookstore.business;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import com.acertainbookstore.utils.BookStoreUtility;
 
 /**
@@ -27,6 +30,8 @@ public class BookStoreBook extends ImmutableBook {
 
 	/** Whether the book is editor picked. */
 	private boolean editorPick;
+
+	private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
 	/**
 	 * Instantiates a new {@link BookStoreBook}.
@@ -67,6 +72,14 @@ public class BookStoreBook extends ImmutableBook {
 		this.setNumCopies(bookToCopy.getNumCopies());
 		this.setTotalRating(bookToCopy.getTotalRating());
 		this.setEditorPick(bookToCopy.isEditorPick());
+	}
+
+	public void lock() {
+		lock.writeLock().lock();
+	}
+
+	public void unlock() {
+		lock.writeLock().unlock();
 	}
 
 	/**
