@@ -37,6 +37,7 @@ public class SingleLockConcurrentCertainBookStore implements BookStore, StockMan
 	public SingleLockConcurrentCertainBookStore() {
 		// Constructors are not synchronized
 		bookMap = new HashMap<Integer, BookStoreBook>();
+		System.out.println("Single");
 	}
 
 	private void validate(StockBook book) throws BookStoreException {
@@ -118,6 +119,11 @@ public class SingleLockConcurrentCertainBookStore implements BookStore, StockMan
 			for (StockBook book : bookSet) {
 				int isbn = book.getISBN();
 				bookMap.put(isbn, new BookStoreBook(book));
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		} finally {
 			lock.writeLock().unlock();
@@ -152,6 +158,11 @@ public class SingleLockConcurrentCertainBookStore implements BookStore, StockMan
 				numCopies = bookCopy.getNumCopies();
 				book = bookMap.get(isbn);
 				book.addCopies(numCopies);
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		} finally {
 			lock.writeLock().unlock();
@@ -223,7 +234,7 @@ public class SingleLockConcurrentCertainBookStore implements BookStore, StockMan
 			Boolean saleMiss = false;
 
 			Map<Integer, Integer> salesMisses = new HashMap<>();
-
+ 
 			for (BookCopy bookCopyToBuy : bookCopiesToBuy) {
 				isbn = bookCopyToBuy.getISBN();
 
@@ -238,7 +249,14 @@ public class SingleLockConcurrentCertainBookStore implements BookStore, StockMan
 					salesMisses.put(isbn, bookCopyToBuy.getNumCopies() - book.getNumCopies());
 					saleMiss = true;
 				}
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
+
+
 
 			// We throw exception now since we want to see how many books in the
 			// order incurred misses which is used by books in demand
@@ -252,9 +270,14 @@ public class SingleLockConcurrentCertainBookStore implements BookStore, StockMan
 
 			// Then make the purchase.
 			for (BookCopy bookCopyToBuy : bookCopiesToBuy) {
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				book = bookMap.get(bookCopyToBuy.getISBN());
-				// System.out.println("Book: " + book + " ISBN: " + bookCopyToBuy.getISBN());
 				book.buyCopies(bookCopyToBuy.getNumCopies());
+				
 			}
 		} finally {
 			lock.writeLock().unlock();

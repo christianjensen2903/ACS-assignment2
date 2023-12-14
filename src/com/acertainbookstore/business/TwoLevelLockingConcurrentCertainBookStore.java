@@ -36,6 +36,7 @@ public class TwoLevelLockingConcurrentCertainBookStore implements BookStore, Sto
 	public TwoLevelLockingConcurrentCertainBookStore() {
 		// Constructors are not synchronized
 		bookMap = new HashMap<>();
+		System.out.println("Two");
 	}
 
 	private void validate(StockBook book) throws BookStoreException {
@@ -151,10 +152,17 @@ public class TwoLevelLockingConcurrentCertainBookStore implements BookStore, Sto
 				book = bookMap.get(isbn);
 				book.lock.writeLock().lock();
 				try {
-					book.addCopies(numCopies);
-				} finally {
-					book.lock.writeLock().unlock();
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
+				book.addCopies(numCopies);
+			}
+
+			for (BookCopy bookCopy : bookCopiesSet) {
+				isbn = bookCopy.getISBN();
+				book = bookMap.get(isbn);
+				book.lock.writeLock().unlock();
 			}
 		} finally {
 			lock.readLock().unlock();
@@ -271,8 +279,16 @@ public class TwoLevelLockingConcurrentCertainBookStore implements BookStore, Sto
 
 			// Then make the purchase.
 			for (BookCopy bookCopyToBuy : bookCopiesToBuy) {
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				book = bookMap.get(bookCopyToBuy.getISBN());
 				book.buyCopies(bookCopyToBuy.getNumCopies());
+			}
+			for (BookCopy bookCopyToBuy : bookCopiesToBuy) {
+				book = bookMap.get(bookCopyToBuy.getISBN());
 				book.lock.writeLock().unlock();
 			}
 		} finally {
